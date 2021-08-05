@@ -1,18 +1,24 @@
 'use strict';
 
 const express = require('express');
+const JobsModel = require('../models/Jobs');
 const router = express.Router();
 
-router.get('/:id?', async (req, res) => {
-    if (!!req.params.id) {
-        const malletId = req.params.id;
-        const theMallet = await MalletsModel.getMalletById(malletId);
-        const theReview = await MalletsModel.getAllReviewsById(malletId);
-        res.json(theMallet).status(200)
+router.get('/:user?', async (req, res) => {
+    if (!!req.params.user) {
+        const { user } = req.params;
+        const Favorites = await JobsModel.getAllUserFavorites(user);
+        res.json(Favorites).status(200);
     } else {
-        const malletsData = await MalletsModel.getAllMalletData();
-        res.json(malletsData).status(200)
+        const allData = await JobsModel.getAll();
+        res.json(allData).status(200);
     }
+})
+
+router.post('/add', async (req, res) => {
+    console.log('req body: ', req.body)
+    const response = await JobsModel.addFavorite(req.body);
+    res.status(200).send(response);
 })
 
 

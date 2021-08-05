@@ -3,15 +3,10 @@
 const express = require('express');
 const router = express.Router();
 
-router.get('/', (req, res) => {
-    res.render('template', {
-        locals: {
-            title: 'Home Page'
-        },
-        partials: {
-            body: 'partial-index'
-        }
-    })
+router.get('/', async (req, res) => {
+    const message = `Welcome to the GrepJobs API \n
+    Navigate to routes /jobs/ or /jobs/{job_id} to view saved information`
+    res.send(message)
 })
 
 module.exports = router

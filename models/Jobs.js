@@ -30,7 +30,8 @@ class JobsModel {
         try {
             const response = await db.any(`
                 SELECT * FROM jobs
-                WHERE user_sub = 'auth0|${userSub}'; `
+                WHERE user_sub = '${userSub}'
+                ORDER BY id DESC; `
             )
             return response;
         } catch (error) {
@@ -39,14 +40,41 @@ class JobsModel {
         }
     };
 
-    static async addFavorite(listing, userSub) {
-        const {id, company_name, role, logo, location, date_posted, user_sub } = listing;
+    static async addFavorite(reqBody) {
+        const {id, company_name, role, logo, location, date_posted, user_sub } = reqBody;
         try {
             const response = await db.result(`
                 INSERT INTO jobs (job_id, user_sub, company_name, role, logo, location, date_posted)
                 VALUES (${id}, '${user_sub}', '${company_name}', '${role}', '${logo}', '${location}', '${date_posted}');`);
                 return response;
+        } catch (error) {
+            console.error('ERROR', error)
+            return error
+        }
+    };
 
+    static async deleteFavorite(reqBody) {
+        const { id, user_sub } = reqBody;
+        try {
+            const response = await db.result(`
+                DELETE FROM jobs
+                WHERE id = ${id} AND user_sub = '${user_sub}';`);
+                return response;
+        } catch (error) {
+            console.error('ERROR', error)
+            return error
+        }
+    };
+
+    static async updateFavorite(reqBody) {
+        const { id, applied, user_sub } = reqBody;
+
+        try {
+            const response = await db.result(`
+                UPDATE jobs
+                SET "applied" = ${!applied}
+                WHERE id = ${id} AND user_sub = '${user_sub}';`);
+                return response;
         } catch (error) {
             console.error('ERROR', error)
             return error
